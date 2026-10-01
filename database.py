@@ -411,9 +411,6 @@ def ds_diem_danh():
 
 
 # ========== THANH TOÁN & HÓA ĐƠN ==========
-# Nếu phiếu đã hết hạn, thanh toán vẫn được — coi như GIA HẠN: tự động
-# tính lại Ngay_Bat_Dau (hôm nay) và Ngay_Het_Han (hôm nay + thời hạn
-# gói), tính lại tiền gói. Không thay đổi gì ở dang_ky_goi.
 
 def thanh_toan(Ma_DK):
     conn = connect()
@@ -430,12 +427,6 @@ def thanh_toan(Ma_DK):
     lan_dau = (Trang_Thai != "Đã thanh toán")
 
     Hom_Nay = datetime.now().strftime("%Y-%m-%d")
-    # Ap dung CHUNG 1 dieu kien cho moi truong hop: neu ngay het han hien
-    # dang luu (du la lan dau hay da tung thanh toan) da qua so voi hom
-    # nay, thi tinh lai ngay bat dau/ket thuc = hom nay + thoi han goi.
-    # Nho vay, ke ca phieu dang ky voi ngay qua cu (het han ngay tu luc
-    # dang ky, chua tung thanh toan) cung duoc cap nhat dung ngay ngay
-    # trong LAN THANH TOAN DAU TIEN, khong can thanh toan 2 lan.
     da_qua_han = Hom_Nay > Ngay_Het_Han
 
     if da_qua_han:
@@ -445,8 +436,6 @@ def thanh_toan(Ma_DK):
         Ngay_Het_Han_Moi = D2.strftime("%Y-%m-%d")
         tien_goi = gia_goi
     else:
-        # Con han: lan dau thi tinh tien goi (giu nguyen ngay da dang ky),
-        # da thanh toan roi thi khong tinh lai tien goi nua.
         tien_goi = gia_goi if lan_dau else 0
 
     tien_dich_vu_moi = conn.execute("""
